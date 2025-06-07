@@ -1,7 +1,3 @@
-def matrixMult(A, B):
-    return A
-
-
 # matrix looks like [[a11,a21,...],[a12,a22,...],...]. [first row, second row, etc]
 # matrix mult looks like (AB)11 = a11 b11 + a12b21 + a13b31+...
 
@@ -38,8 +34,8 @@ def square(A):
     return False
 
 
-def matrixAdd(A,B):
-    #just assume they're the correct dimensions etc
+def matrixAdd(A, B):
+    # just assume they're the correct dimensions etc
     m, n = rows(A), columns(A)
     C = [[0 for _ in range(m)] for _ in range(n)]
     for i in range(m):
@@ -47,14 +43,24 @@ def matrixAdd(A,B):
             C[i][j] = A[i][j] + B[i][j]
     return C
 
-def matrixSubtract(A,B):
-    #just assume they're the correct dimensions etc
+
+def matrixSubtract(A, B):
+    # just assume they're the correct dimensions etc
     m, n = rows(A), columns(A)
     C = [[0 for _ in range(m)] for _ in range(n)]
     for i in range(m):
         for j in range(n):
             C[i][j] = A[i][j] - B[i][j]
     return C
+
+
+def scalarMult(A, a):
+    m, n = rows(A), columns(A)
+    B = [[0 for _ in range(m)] for _ in range(n)]
+    for i in range(m):
+        for j in range(n):
+            B[i][j] = A[i][j] * a
+    return B
 
 
 def matrixMult(A, B):
@@ -111,7 +117,48 @@ def matrixMult(A, B):
     return [[C11, C12], [C21, C22]]'''
 
 
-A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-B = [[2, 5, 7], [2, 2, 2], [111, 222, 333]]
+def deleteRow(A, row):  # delete some row, index starts at 1
+    A.pop(row - 1)
+    return A
 
-print(matrixAdd(A,B))
+
+def deleteColumn(A, column):
+    c = column - 1
+    for row in A:
+        row.pop(c)
+    return A
+
+
+def deleteColRow(A, r, c):
+    return deleteRow(deleteColumn(A, c), r)
+
+
+def determinant(A):
+    if not square(A):
+        return 'not square'
+    if rows(A) == 1:
+        return A[0][0]
+    if rows(A) == 2:
+        d = A[0][0] * A[1][1] - A[1][0] * A[0][1]
+        return d
+
+    n = len(A)
+    det = 0
+
+    for i in range(n):
+        copy = [row[:] for row in A]
+        deleteColRow(copy, 1, i + 1)
+        coefficient = ((-1)**i) * determinant(copy)
+        det += coefficient * A[0][i]
+
+    return det
+
+
+
+A = [[1, 2, 3],
+     [4, 5, 6],
+     [7, 8, 9]]
+
+B = [[2, 5, 7],
+     [2, 2, 2],
+     [111, 222, 333]]
